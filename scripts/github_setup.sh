@@ -4,6 +4,11 @@ set -euo pipefail
 EMAIL="tfarias@protonmail.com"
 SSH_KEY="$HOME/.ssh/id_ed25519"
 
+if ssh -T git@github.com 2>&1 | grep -q "successfully authenticated"; then
+  echo "GitHub SSH already configured — skipping"
+  exit 0
+fi
+
 if [ -f "$SSH_KEY" ]; then
   echo "SSH key already exists at $SSH_KEY"
 else
