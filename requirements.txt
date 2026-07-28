@@ -1,0 +1,10 @@
+# Tools to install — one per line, # for comments
+ripgrep
+fzf
+fd
+tree-sitter-cli
+yazi
+lazygit
+bat
+jq
+btop

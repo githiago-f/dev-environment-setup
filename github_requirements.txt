@@ -1,0 +1,2 @@
+# GitHub releases to install — format: owner/repo
+githiago-f/lazyapi
