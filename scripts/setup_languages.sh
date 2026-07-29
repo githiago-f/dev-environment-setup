@@ -71,7 +71,7 @@ install_golangci_lint() {
 install_nvim() {
   echo "=== Installing Neovim ==="
   if $YAY_AVAILABLE; then
-    yay -S --noconfirm neovim
+    yay -S --noconfirm neovim-nightly-bin
   else
     curl -fsSL https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz -o /tmp/nvim.tar.gz
     sudo rm -rf /opt/nvim
