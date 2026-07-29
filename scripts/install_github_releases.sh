@@ -28,19 +28,28 @@ detect_asset() {
 
 install_github_release() {
   local repo="$1"
-  local tag asset url name
+  local tag url name
 
   echo "--- Installing $repo ---"
 
-  tag=$(curl -s "https://api.github.com/repos/${repo}/releases/latest" | grep '"tag_name"' | cut -d'"' -f4)
+  local release_json
+  release_json=$(curl -s "https://api.github.com/repos/${repo}/releases/latest")
+  tag=$(echo "$release_json" | grep '"tag_name"' | cut -d'"' -f4)
   [ -z "$tag" ] && { echo "  Warning: could not fetch latest release"; return; }
 
-  asset=$(curl -s "https://api.github.com/repos/${repo}/releases/latest" \
-    | grep '"browser_download_url"' | cut -d'"' -f4)
+  local pairs selected
+  pairs=$(echo "$release_json" | awk -F'"' '
+    /"assets":/ {a=1; next}
+    a && /"name":/ {n=$4}
+    a && /"browser_download_url":/ {print n "|" $4; n=""}
+  ')
 
-  [ -z "$asset" ] && { echo "  Warning: no assets found"; return; }
+  [ -z "$pairs" ] && { echo "  Warning: no assets found"; return; }
 
-  url="$asset"
+  selected=$(detect_asset "$(echo "$pairs" | cut -d'|' -f1 | paste -sd, -)")
+  url=$(echo "$pairs" | grep -F "$selected" | cut -d'|' -f2 | head -1)
+  [ -z "$url" ] && url=$(echo "$pairs" | cut -d'|' -f2 | head -1)
+
   name="${repo##*/}"
 
   echo "  Downloading $name $tag..."

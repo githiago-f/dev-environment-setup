@@ -8,3 +8,4 @@ lazygit
 bat
 jq
 btop
+plantuml

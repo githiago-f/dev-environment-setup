@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [ ! -f pom.xml ]; then
+  echo "ERROR: no pom.xml in the current directory"
+  exit 1
+fi
+
+opts="--enable-native-access=ALL-UNNAMED --sun-misc-unsafe-memory-access=allow"
+
+phases=$(MAVEN_OPTS="$opts" mvn help:describe -Dcmd=install 2>/dev/null | sed -n 's/^* //p')
+selected=$(printf "%s" "$phases" | fzf)
+[ -z "$selected" ] && exit 1
+
+MAVEN_OPTS="$opts" mvn "${selected%%:*}"

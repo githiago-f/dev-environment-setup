@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+languages="golang lua java typescript nodejs python scala javascript zig rust"
+core_utils="xargs find mv sed awk grep"
+nvim="neovim"
+
+selected=$(printf "%s\n%s\n%s" "$languages" "$core_utils" "$nvim" | tr ' ' '\n' | fzf)
+[ -z "$selected" ] && exit 1
+
+if echo "$nvim" | tr ' ' '\n' | grep -qsF "$selected"; then
+  cat ~/.config/nvim/vim-tools.md 2>/dev/null || echo "No vim-tools.md found"
+  exit
+fi
+
+read -p "query: " query
+
+if echo "$languages" | tr ' ' '\n' | grep -qsF "$selected"; then
+  CHT_URL="cht.sh/$selected/${query// /+}"
+else
+  CHT_URL="cht.sh/$selected~$query"
+fi
+
+curl -s "$CHT_URL" | less -R

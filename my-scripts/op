@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# opener: cd
+set -euo pipefail
+
+if command -v fd &>/dev/null; then
+  projects=$(fd . -d 1 -t d ~/projects 2>/dev/null | grep -v '/key-secret$' || true)
+  configs=$(fd . -d 1 ~/.config/ 2>/dev/null || true)
+elif command -v fdfind &>/dev/null; then
+  projects=$(fdfind . -d 1 -t d ~/projects 2>/dev/null | grep -v '/key-secret$' || true)
+  configs=$(fdfind . -d 1 ~/.config/ 2>/dev/null || true)
+else
+  projects=$(find ~/projects -mindepth 1 -maxdepth 1 -type d 2>/dev/null | grep -v '/key-secret$' || true)
+  configs=$(find ~/.config/ -mindepth 1 -maxdepth 1 2>/dev/null || true)
+fi
+
+dir=$(printf "%s\n%s" "$projects" "$configs" | grep -v "^$" | fzf)
+[ -z "$dir" ] && exit 1
+
+echo "$dir"

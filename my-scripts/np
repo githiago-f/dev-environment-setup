@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+# opener: cd
+set -euo pipefail
+
+PROJECTS="$HOME/projects"
+initializer=$(printf "java\nzig\nnode\ngo\nscala" | fzf)
+[ -z "$initializer" ] && exit 1
+
+read_def() {
+  local default_value="$2"
+  read -p "$1 [$default_value]: " var
+  echo "${var:-$default_value}"
+}
+
+dir="$PWD"
+
+case "$initializer" in
+  java)
+    groupId=$(read_def "Group ID" "com.example")
+    artifactId=$(read_def "Artifact ID" "demo")
+    archetype=$(read_def "Archetype ID" "maven-archetype-quickstart")
+    MAVEN_OPTS="--enable-native-access=ALL-UNNAMED --sun-misc-unsafe-memory-access=allow" \
+      mvn archetype:generate \
+        -DgroupId="$groupId" \
+        -DartifactId="$artifactId" \
+        -DarchetypeArtifactId="$archetype" \
+        -DinteractiveMode=false
+    dir="$PROJECTS/$artifactId"
+    ;;
+  zig)
+    read -p "Project name: " project
+    dir="$PROJECTS/$project"
+    mkdir -p "$dir" && cd "$dir" && zig init
+    ;;
+  node)
+    read -p "Project name: " project
+    read -p "Version (lts/jod): " version
+    dir="$PROJECTS/$project"
+    mkdir -p "$dir" && cd "$dir" && npm init -y && echo "$version" > .nvmrc
+    ;;
+  go)
+    read -p "Project name: " project
+    dir="$PROJECTS/$project"
+    mkdir -p "$dir" && cd "$dir" && go mod init "github.com/githiago-f/$project"
+    ;;
+  scala)
+    sbt new scala/scala3.g8
+    dir="$PROJECTS"
+    ;;
+esac
+
+echo "$dir"
+cd "$dir"
