@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+# opener: cd
+set -euo pipefail
+
+projects="$HOME/projects"
+user="githiago-f"
+
+if [ $# -lt 1 ]; then
+  echo "Usage: opener [user/]repo"
+  exit 1
+fi
+
+input="$1"
+
+if [[ "$input" == */* ]]; then
+  owner="${input%%/*}"
+  repo="${input#*/}"
+else
+  owner="$user"
+  repo="$input"
+fi
+
+if [ "$owner" = "$user" ]; then
+  url="git@github.com:${owner}/${repo}.git"
+else
+  url="https://github.com/${owner}/${repo}.git"
+fi
+
+dir="$projects/$repo"
+
+if [ -d "$dir" ]; then
+  echo "Already exists: $dir"
+  echo "$dir"
+  exit 0
+fi
+
+git clone "$url" "$dir"
+echo "$dir"
