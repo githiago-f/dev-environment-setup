@@ -6,7 +6,7 @@ projects="$HOME/projects"
 user="githiago-f"
 
 if [ $# -lt 1 ]; then
-  echo "Usage: opener [user/]repo"
+  echo "Usage: gc [user/]repo"
   exit 1
 fi
 
