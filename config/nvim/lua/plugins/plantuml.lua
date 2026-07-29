@@ -1,4 +1,5 @@
 vim.pack.add({ "https://github.com/githiago-f/plantuml.nvim" })
+vim.pack.add({ "https://github.com/aklt/plantuml-syntax" })
 
 require("plantuml").setup({
   output = { format = "png", float = false },
