@@ -9,3 +9,8 @@ bat
 jq
 btop
 plantuml
+tmux
+kitty
+graphviz
+ttf-jetbrains-mono-nerd
+neovim-nightly-bin
