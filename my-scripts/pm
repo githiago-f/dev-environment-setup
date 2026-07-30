@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+__load_nvm() {
+  export NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
+  [ -f "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+}
+
+__handle_nvm() {
+  local version_file=
+  if [ -f .nvmrc ]; then
+    version_file=.nvmrc
+  elif [ -f .node-version ]; then
+    version_file=.node-version
+  else
+    return
+  fi
+
+  __load_nvm
+  local version
+  version=$(<"$version_file")
+
+  nvm use "$version" 2>/dev/null && return
+
+  echo "Installing node $version..."
+  nvm install "$version"
+  nvm use "$version"
+}
+
+__detect_pm() {
+  local pm
+  pm=$(node -e "try{const p=require('./package.json');if(p.packageManager)console.log(p.packageManager.split('@')[0])}catch(e){}" 2>/dev/null || true)
+  [ -n "$pm" ] && echo "$pm" && return
+
+  [ -f bun.lockb ] && echo "bun" && return
+  [ -f pnpm-lock.yaml ] && echo "pnpm" && return
+  [ -f yarn.lock ] && echo "yarn" && return
+  [ -f package-lock.json ] && echo "npm" && return
+  [ -f .yarnrc.yml ] || [ -f .yarnrc ] && echo "yarn" && return
+
+  echo "npm"
+}
+
+__handle_nvm
+
+if [ ! -f package.json ]; then
+  echo "No package.json in $PWD"
+  exit 1
+fi
+
+PM=$(__detect_pm)
+
+if [ $# -gt 0 ]; then
+  $PM run "$@"
+  exit
+fi
+
+scripts=$(node -e "const s=require('./package.json').scripts||{};Object.keys(s).forEach(k=>console.log(k))" 2>/dev/null || true)
+
+[ -z "$scripts" ] && echo "No scripts found" && exit 1
+
+selected=$(echo "$scripts" | fzf)
+[ -z "$selected" ] && exit 1
+
+echo "▶ $PM run $selected"
+read -r -p "args: " args
+
+$PM run "$selected" $args
