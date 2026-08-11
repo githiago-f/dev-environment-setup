@@ -35,8 +35,46 @@ map("n", "<leader>E", function()
 end, { desc = "Explorer at current file" })
 
 -- Search
+local MiniPick = require("mini.pick")
+
+local function grep_live_with_query(text)
+  if text and text ~= "" then
+    local gr = vim.api.nvim_create_augroup("MiniGrepQuery", { clear = true })
+    vim.api.nvim_create_autocmd("User", {
+      group = gr,
+      pattern = "MiniPickStart",
+      once = true,
+      callback = function()
+        vim.schedule(function()
+          if MiniPick.is_picker_active() then
+            MiniPick.set_picker_query(vim.split(text, ""))
+          end
+        end)
+      end,
+    })
+  end
+  MiniPick.builtin.grep_live()
+end
+
+local function visual_selection_text()
+  local start = vim.fn.getpos("'<")
+  local finish = vim.fn.getpos("'>")
+  local lines = vim.fn.getline(start[2], finish[2])
+  lines[1] = string.sub(lines[1], start[3], -1)
+  lines[#lines] = string.sub(lines[#lines], 1, finish[3])
+  return table.concat(lines, "\n")
+end
+
 map("n", "<leader>ff", "<cmd>Pick files<CR>", { desc = "Find files" })
-map("n", "<leader>fg", "<cmd>Pick grep<CR>", { desc = "Live grep" })
+map("n", "<leader>fg", function() grep_live_with_query() end, { desc = "Live grep" })
+map("n", "<leader>fw", function() grep_live_with_query(vim.fn.expand("<cword>")) end, { desc = "Grep word under cursor" })
+map("n", "<leader>f/", function()
+  MiniPick.builtin.grep_live(
+    { globs = { vim.fn.expand("%:t") } },
+    { source = { cwd = vim.fn.fnamemodify(vim.fn.expand("%:p"), ":h") } }
+  )
+end, { desc = "Grep in current buffer" })
+map("v", "<leader>fv", function() grep_live_with_query(visual_selection_text()) end, { desc = "Grep visual selection" })
 map("n", "<leader>fb", "<cmd>Pick buffers<CR>", { desc = "Find buffers" })
 map("n", "<leader>fh", "<cmd>Pick help<CR>", { desc = "Help" })
 

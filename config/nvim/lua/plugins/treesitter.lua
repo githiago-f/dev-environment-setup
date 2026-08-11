@@ -23,6 +23,7 @@ require("nvim-treesitter.configs").setup({
     "lua",
     "zig",
     "java",
+    "scala",
     "bash",
     "markdown",
     "markdown_inline",

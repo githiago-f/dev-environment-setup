@@ -2,12 +2,13 @@ vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
 vim.keymap.set({ "n", "v" }, "<Space>", "<Nop>", {
-  silent = true,
+	silent = true,
 })
 
 require("config.options")
 require("config.diagnostics")
 
+require("plugins/image-nvim")
 require("plugins/mini")
 require("plugins/mason")
 require("plugins/treesitter")
@@ -21,13 +22,14 @@ require("plugins/plantuml")
 require("config.keymaps")
 
 vim.lsp.enable({
-  "basedpyright",
-  "gopls",
-  "ts_ls",
-  "html",
-  "cssls",
-  "jsonls",
-  "lua_ls",
-  "jdtls",
-  "zls",
+	"basedpyright",
+	"gopls",
+	"ts_ls",
+	"html",
+	"cssls",
+	"jsonls",
+	"lua_ls",
+	"jdtls",
+	"metals",
+	"zls",
 })
