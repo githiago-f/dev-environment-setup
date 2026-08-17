@@ -32,7 +32,7 @@ else
   pass "block marker found in .bashrc"
 fi
 
-if grep -q '/home/thiag/projects/setup/my-scripts' "$RC_FILE"; then
+if grep -q "$REPO_DIR/my-scripts" "$RC_FILE"; then
   pass "block contains correct my-scripts path"
 else
   fail "block missing my-scripts path"
