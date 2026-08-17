@@ -12,5 +12,6 @@ plantuml
 tmux
 kitty
 graphviz
+imagemagick
 ttf-jetbrains-mono-nerd
 neovim-nightly-bin

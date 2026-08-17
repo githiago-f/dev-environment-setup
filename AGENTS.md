@@ -6,7 +6,7 @@ Personal Arch Linux dev environment bootstrapper. Installs tools via pacman/yay 
 
 - `setup.sh` — copies `my-scripts/` to `~/.local/bin`, registers PATH + opener functions in `.bashrc`, runs script suites
   - No flag: safe mode — runs only `github_setup.sh` and `sync_config.sh`
-  - `--full`: runs all scripts under `scripts/`
+  - `--full`: runs all scripts under `scripts/`, then `configure-low-memory-jvm.sh` (skipped if `java` not on PATH)
 - `bash test_setup.sh` — tests block registration, opener functions, idempotency, PATH injection
 
 ## Scripts (run by `setup.sh` in order)

@@ -16,6 +16,8 @@ cat > "$TMUX_CONF" << 'TMUX_EOF'
 set -g default-terminal "tmux-256color"
 set -ga terminal-overrides ",*256col*:Tc"
 set -g update-environment "DISPLAY WAYLAND_DISPLAY SSH_AUTH_SOCK KITTY_PID KITTY_WINDOW_ID"
+set -g allow-passthrough on
+set -g visual-activity off
 set -g mouse on
 set -g history-limit 50000
 set -g escape-time 10

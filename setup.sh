@@ -29,6 +29,13 @@ if $INSTALL; then
     bash "$script"
     echo
   done
+
+  echo "=== Configuring low-memory JVM ==="
+  if command -v java >/dev/null 2>&1; then
+    bash "$REPO_DIR/configure-low-memory-jvm.sh"
+  else
+    echo "  Skipping low-memory JVM config (java not on PATH)"
+  fi
 else
   echo "=== Running safe setup scripts ==="
   for script in "$REPO_DIR"/scripts/github_setup.sh "$REPO_DIR"/scripts/sync_config.sh; do
